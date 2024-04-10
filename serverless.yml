@@ -1,0 +1,67 @@
+#serverless.yml
+service: serverless-flask-container
+
+provider:
+  name: aws
+  ecr:
+    images:
+      appimage:
+        path: ./
+
+      authimage:
+        path: ./authorizer
+
+      loggerimage:
+        path: ./login
+
+layers:
+  tesseractOCR:
+    path: converter/tesseract/docker_tesseract_al2/layer
+    compatibleRuntimes:
+      - python3.10
+
+functions:
+
+  authorizerApiJwtKey:
+    image:
+      name: authimage
+    
+  app:
+    image:
+      name: appimage
+    events:
+      - http: ANY /
+      - http: 
+          path: /{proxy+}
+          method: ANY
+          authorizer:
+            name: authorizerApiJwtKey
+            type: TOKEN
+
+  logger:
+    image:
+      name: loggerimage
+    events:
+      - http: 
+          path: /accounts/{proxy+}
+          method: ANY
+
+  consumer:
+    handler: converter/handler.consumer
+    runtime: python3.10
+    events:
+      - sqs: arn:aws:sqs:us-east-1:917414156098:microservice-converter-queue
+    layers:
+      - {Ref: TesseractOCRLambdaLayer}
+    timeout: 30
+    memorySize: 2048
+    package:
+      individually: true
+      patterns:
+        - '!./**'
+        - '!converter/**'
+        - '!converter/tesseract/**'
+        - 'converter/toText_convert/*'
+        - 'converter/adapters/*'
+        - 'converter/handler.py'
+        - 'converter/requirements.txt'

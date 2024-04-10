@@ -1,0 +1,9 @@
+#.dockerignore
+__pycache__/
+.git/
+.serverless/
+.gitignore
+.dockerignore
+serverless.yml
+loginEnv/
+authorizer/

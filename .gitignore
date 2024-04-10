@@ -1,0 +1,14 @@
+.git
+package.json
+package-lock.json
+__pycache__
+serverless_copy.yml
+node_modules/
+issues_faced
+envLambda/
+
+login/venvLogin/**
+converter/venvConverter/**
+converter/tesseract/amazonlinux-2/**
+converter/tesseract/build_tesseract.sh
+converter/tesseract/README.md
