@@ -12,3 +12,5 @@ converter/venvConverter/**
 converter/tesseract/amazonlinux-2/**
 converter/tesseract/build_tesseract.sh
 converter/tesseract/README.md
+converter/tesseract/Dockerfile
+converter/tesseract/docker_tesseract_al2/Dockerfile
