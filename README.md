@@ -1,6 +1,6 @@
 # Python Flask API OCR service backend AWS Serverless Framework
 
-This template demostrate how make a OCR API service with Python using Flask running on AWS Lambda containers images, API Gateway and AWS SQS. 
+This project is a web service OCR API made with Python using Flask running on AWS Lambda containers images, API Gateway and AWS SQS. 
 For storage images and texts use MongoDB with Gridfs and for users storage MySql.
 
 This is a microservices-based API which includes a login service, authorizer token, upload and download service and the ocr-converter service.
