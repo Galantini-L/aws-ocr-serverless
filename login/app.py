@@ -83,7 +83,7 @@ def createJWT(username, secret, authz):
         "exp":datetime.datetime.now(tz=datetime.timezone.utc)
         + datetime.timedelta(days=1),
         #issue at
-        "iat":datetime.datetime.utcnow(),
+        "iat":datetime.datetime.now(datetime.timezone.utc),
         "admin":authz
     },secret,algorithm="HS256")
 
