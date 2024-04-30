@@ -45,7 +45,7 @@ def consumer(event, context):
             print(f'error uploading to mongo: {err}')
             return error_return
 
-        #upload message to SQS queue
+        #upload message to Notification SQS queue
         try:
             message_body['text_fid'] = str(text_fid)
             message_attribute = {}

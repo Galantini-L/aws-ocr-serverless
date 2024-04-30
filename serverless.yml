@@ -50,7 +50,7 @@ functions:
     handler: converter/handler.consumer
     runtime: python3.10
     events:
-      - sqs: arn:aws:sqs:us-east-1:917414156098:microservice-converter-queue
+      - sqs: arn:aws:sqs:us-east-1:590183781429:microservice-converter-queue
     layers:
       - {Ref: TesseractOCRLambdaLayer}
     timeout: 30
