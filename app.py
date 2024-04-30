@@ -54,7 +54,18 @@ def upload():
             print(f'body is empty. User: {access["username"]}')
             return 'Not acceptable, file was not selected. You have to select a valid file.', 406
         
-        file = b64decode(sls_event['body'])
+        print(f'type of isBase64Encoded: {sls_event["isBase64Encoded"]}')
+
+        #validate if file in body is base 64 decoded
+        #decode if True
+        file = sls_event['body']
+        if sls_event['isBase64Encoded']:
+            try:
+                file = b64decode(file)
+            except:
+                print('error in decode file image')
+                return 'error in image (decode)', 503
+            
         err = utils.upload(file,fs_image,access, 'ocr_text_converter')
         print(f'uploaded by user :{access["username"]}')
         if err:
