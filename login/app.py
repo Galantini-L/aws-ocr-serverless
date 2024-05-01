@@ -76,8 +76,27 @@ def login():
 
 @server.route("account/signup", methods = ['POST'])
 def signup():
-    pass
+    event = request.environ.get('serverless.event')
+    authorizationHeader = getAuthHeader()
+    
+    if not authorizationHeader:
+        return "missing credentials", 401
 
+    body = request.environ.get('serverless.event')['body']
+    if not body:
+        return 'Body is empty. Can not create user.', 400
+    
+    body = jsonify(body)
+
+    try: 
+        with connection.cursor() as cursor:
+            sql = "INSERT INTO user (email, password, username) VALUES email= %s"
+            print(f'sql query: {sql}')
+            res = cursor.execute(sql, body)
+            print(f"query response: {res}")
+    except Exception as er:
+        print(f'error in user query: {er}')
+        return "error creating new user", 500
 
 
 def createJWT(username, secret, authz):
