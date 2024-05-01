@@ -3,6 +3,7 @@ import jwt, os, datetime
 import serverless_wsgi
 import pymysql.cursors
 from base64 import b64decode, decode
+from utils.authHeader import getAuthHeader
 
 server = Flask(__name__)
 
@@ -29,15 +30,10 @@ def pylogin():
     return 'hello world', 200
 
 
-@server.route("/accounts/login", methods=["POST"])
+@server.route("/account/login", methods=["POST"])
 def login():
     event = request.environ.get('serverless.event')
-    authorizationHeader = None
-    if 'Authorization' in event['headers']:
-        authorizationHeader = event['headers']['Authorization']
-    if 'authorization' in event['headers']:
-        authorizationHeader = event['headers']['authorization'] 
-        
+    authorizationHeader = getAuthHeader(event)
     print(f'content of authorization {authorizationHeader}')
 
     if not authorizationHeader:
@@ -76,6 +72,13 @@ def login():
                 return "Internal server error", 501
         return "Invalid credentials", 401
     return "Invalid credentials", 401
+
+
+@server.route("account/signup", methods = ['POST'])
+def signup():
+    pass
+
+
 
 def createJWT(username, secret, authz):
     return jwt.encode({
