@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, make_response
-import jwt, os, datetime
+import jwt, os, datetime, json
 import serverless_wsgi
 import pymysql.cursors
 from base64 import b64decode, decode
@@ -32,6 +32,7 @@ def pylogin():
 
 @server.route("/account/login", methods=["POST"])
 def login():
+    print('/login')
     event = request.environ.get('serverless.event')
     authorizationHeader = getAuthHeader(event)
     print(f'content of authorization {authorizationHeader}')
@@ -74,27 +75,36 @@ def login():
     return "Invalid credentials", 401
 
 
-@server.route("account/signup", methods = ['POST'])
+@server.route("/account/signup", methods = ['POST'])
 def signup():
-    event = request.environ.get('serverless.event')
-    authorizationHeader = getAuthHeader()
-    
-    if not authorizationHeader:
-        return "missing credentials", 401
-
+    print('/sign up')
+    event = request.environ.get('serverless.event') 
     body = request.environ.get('serverless.event')['body']
+    print(f'event: {event}')
+
     if not body:
         return 'Body is empty. Can not create user.', 400
-    
-    body = jsonify(body)
+    try:
+        body = json.loads(body)
+        # tuple for sql query
+        req = (body['email'], body['password'], body['username'])
+
+    except Exception as er:
+        print(f'error in body sign up format: {er}')
+        print(f'body: {body}')
+        return 'body format is not correct', 400
 
     try: 
         with connection.cursor() as cursor:
-            sql = "INSERT INTO user (email, password, username) VALUES email= %s"
+            sql = "INSERT INTO user (email, password, username) VALUES (%s, %s, %s)"
             print(f'sql query: {sql}')
-            res = cursor.execute(sql, body)
-            print(f"query response: {res}")
+            cursor.execute(sql, req)
+            connection.commit()
+            cursor.close()
+            return f'user {req[2]} created successfully', 200
     except Exception as er:
+        if er.args[0] == 1062: 
+            return 'Acount already exist', 400
         print(f'error in user query: {er}')
         return "error creating new user", 500
 
