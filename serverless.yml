@@ -43,7 +43,7 @@ functions:
       name: loggerimage
     events:
       - http: 
-          path: /accounts/{proxy+}
+          path: /account/{proxy+}
           method: ANY
 
   consumer:
